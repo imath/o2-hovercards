@@ -378,3 +378,27 @@ function o2_hovercards_template() {
 
 	include $template;
 }
+
+/**
+ * Make sure ticket IDs are not saved as post tags.
+ *
+ * @since 1.0.0
+ *
+ * @param  array $tags The list of Tags o2 found.
+ * @return array       The same list without ticket IDs.
+ */
+function o2_hovercards_found_tags( $tags = array() ) {
+	if ( ! $tags ) {
+		return $tags;
+	}
+
+	$o2hc    = o2_hovercards();
+	$tickets = array();
+
+	foreach ( $tags as $tag ) {
+		$ticket_id = o2_hovercards_service_regex( '#' . $tag, $o2hc->tickets );
+		$tickets[] = $ticket_id;
+	}
+
+	return array_diff( $tags, $tickets );
+}

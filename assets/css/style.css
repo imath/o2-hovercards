@@ -1,3 +1,13 @@
+.o2-hovercardify {
+	display: inline-block;
+	word-break: keep-all;
+}
+
+.o2-hovercardify a {
+	cursor: help;
+	border-bottom: dotted 1px;
+}
+
 .o2-hovercard.wp-pointer-top .wp-pointer-arrow {
 	border-bottom-color: #ddd;
 }
