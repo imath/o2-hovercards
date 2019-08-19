@@ -1,13 +1,13 @@
 {
-    "name": "imath/o2-hovercards",
-    "description": "o2 add-on to bring HoverCards to preview content of external services like Trac tickets or GitHub issues.",
-    "type": "wordpress-plugin",
-    "require": {
-        "squizlabs/php_codesniffer" : "^3.3.1"
-    },
-    "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "*",
-        "phpcompatibility/phpcompatibility-wp" : "*",
-        "wp-coding-standards/wpcs": "*"
-    }
+  "name": "imath/o2-hovercards",
+  "description": "o2 add-on to bring HoverCards to preview content of external services like Trac tickets or GitHub issues.",
+  "type": "wordpress-plugin",
+  "require": {
+      "squizlabs/php_codesniffer" : "^3.3.1"
+  },
+  "require-dev": {
+      "dealerdirect/phpcodesniffer-composer-installer": "*",
+      "phpcompatibility/phpcompatibility-wp" : "*",
+      "wp-coding-standards/wpcs": "*"
+  }
 }

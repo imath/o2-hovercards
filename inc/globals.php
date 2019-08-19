@@ -18,7 +18,7 @@ function o2_hovercards_register_globals() {
 	$o2hc = o2_hovercards();
 
 	// Plugin version.
-	$o2hc->version = '1.0.0-beta';
+	$o2hc->version = '1.0.0';
 
 	// Paths and Urls.
 	$o2hc->dir      = plugin_dir_path( dirname( __FILE__ ) );

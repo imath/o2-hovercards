@@ -11,7 +11,7 @@
  * Plugin Name:       o2 HoverCards
  * Plugin URI:        https://github.com/imath/o2-hovercards
  * Description:       o2 add-on to bring HoverCards to preview content of external services like Trac tickets or GitHub issues.
- * Version:           1.0.0-beta
+ * Version:           1.0.0
  * Author:            imath
  * Author URI:        https://github.com/imath
  * Text Domain:       o2-hovercards
@@ -19,6 +19,11 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path:       /languages/
  * GitHub Plugin URI: https://github.com/imath/o2-hovercards
+ */
+
+/**
+ * Credits: betzster for his great work on [p2-hovercard](https://github.com/Automattic/p2-hovercards).
+ * The purpose of the o2-hovercards plugin is to adapt p2-hovercards for o2.
  */
 
 // Exit if accessed directly.
