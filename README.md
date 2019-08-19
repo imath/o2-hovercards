@@ -18,5 +18,5 @@ Download the `o2-hovercards.zip` file of the latest plugin version listed into t
 
 ## Credits
 
-Thanks @betzster for his great work on [p2-hovercard](https://github.com/Automattic/p2-hovercards).
+Thanks @betzster for his great work on [p2-hovercards](https://github.com/Automattic/p2-hovercards).
 The purpose of the o2-hovercards plugin is to adapt p2-hovercards for o2.
