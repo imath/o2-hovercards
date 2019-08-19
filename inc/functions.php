@@ -44,13 +44,16 @@ function o2_hovercards_load_textdomain() {
  * }
  */
 function o2_hovercards_add_service( $args = array() ) {
-	$args = wp_parse_args( $args, array(
-		'service'  => '',
-		'key'      => '',
-		'url'      => '',
-		'ticket'   => '',
-		'callback' => '',
-	) );
+	$args = wp_parse_args(
+		$args,
+		array(
+			'service'  => '',
+			'key'      => '',
+			'url'      => '',
+			'ticket'   => '',
+			'callback' => '',
+		)
+	);
 
 	$required = array_filter( $args );
 
@@ -60,10 +63,10 @@ function o2_hovercards_add_service( $args = array() ) {
 	}
 
 	foreach ( $args as $key => $arg ) {
-		add_filter( "o2_hovercards_regex_{$key}s", function( $r ) use ( $arg ) {
+		add_filter( "o2_hovercards_regex_{$key}s", function( $r ) use ( $arg ) { // phpcs:ignore
 			$r[] = $arg;
 			return $r;
-		} );
+		} ); // phpcs:ignore
 	}
 
 	add_filter( "o2_hovercards_{$args['service']}", $args['callback'] );
@@ -133,7 +136,8 @@ function o2_hovercards_enqueue_assets() {
 		'o2-hovercards',
 		'o2HoverCards',
 		array(
-			'loader'  => admin_url( 'images/spinner-2x.gif' ),
+			'loader' => admin_url( 'images/spinner-2x.gif' ),
+			'nonce'  => wp_create_nonce( 'o2_hovercard_request' ),
 		)
 	);
 }
@@ -143,8 +147,8 @@ function o2_hovercards_enqueue_assets() {
  *
  * @since 1.0.0
  *
- * @param  string $regex
- * @return string
+ * @param  string $regex The service regex.
+ * @return string        The regex pattern.
  */
 function o2_hovercards_link_regex_map( $regex ) {
 	return "/(?<![\\w-])$regex(?![\\w-])/";
@@ -155,9 +159,9 @@ function o2_hovercards_link_regex_map( $regex ) {
  *
  * @since 1.0.0
  *
- * @param  string $content
- * @param  string $match
- * @return string
+ * @param  string $content The content to look into.
+ * @param  string $match   The content to replace with.
+ * @return string          The new content.
  */
 function o2_hovercards_service_regex( $content, $match ) {
 	$find = o2_hovercards()->regex;
@@ -177,8 +181,8 @@ function o2_hovercards_service_regex( $content, $match ) {
  *
  * @since 1.0.0
  *
- * @param  string        $slug The service regex key.
- * @return boolean|array       False if no services were found, the service response array otherwise.
+ * @param  string $slug  The service regex key.
+ * @return boolean|array False if no services were found, the service response array otherwise.
  */
 function o2_hovercards_get_hovercard_info( $slug = '' ) {
 	if ( ! $slug ) {
@@ -194,7 +198,7 @@ function o2_hovercards_get_hovercard_info( $slug = '' ) {
 	);
 
 	if ( $args['link'] ) {
-		$args['url'] = preg_replace( "/\<a href=\"(.*?)\".*?\<\/a\>/", '$1', $args['link'] );
+		$args['url'] = preg_replace( '/\<a href=\"(.*?)\".*?\<\/a\>/', '$1', $args['link'] );
 	}
 
 	$service = $args['service'];
@@ -234,13 +238,13 @@ function o2_hovercards_get_hovercard_info( $slug = '' ) {
 function o2_hovercards_truncate( $content = '', $length = 250 ) {
 	$linked = make_clickable( $content );
 
-	// if it's already short enough, we're done
+	// if it's already short enough, we're done.
 	if ( strlen( $content ) < $length ) {
 		return $linked;
 	}
 
 	// Grab an array of all the anchor tags, then trim it and check for things that look like URLs.
-	preg_match_all( '#<a\s+.*?href=[\'"]([^\'"]+)[\'"]\s*(?:title=[\'"]([^\'"]+)[\'"])?.*?>((?:(?!</a>).)*)</a>#i', $linked, $urls);
+	preg_match_all( '#<a\s+.*?href=[\'"]([^\'"]+)[\'"]\s*(?:title=[\'"]([^\'"]+)[\'"])?.*?>((?:(?!</a>).)*)</a>#i', $linked, $urls );
 	$content = substr( $content, 0, $length );
 
 	// The regex is a non-anchored pattern and does not have a single fixed starting character.
@@ -263,8 +267,10 @@ function o2_hovercards_truncate( $content = '', $length = 250 ) {
 
 	// Set up the anchors with the trimmed text, but the pre-trimmed href.
 	$replace = array();
-	for( $i = 0; $i < count( $matches[2] ); $i++ ) {
-		$replace[] = sprintf( "<a href='%s' rel='nofollow'>%s</a>", $urls[1][$i], $matches[2][$i] );
+	$count   = count( $matches[2] );
+
+	for ( $i = 0; $i < $count; $i++ ) {
+		$replace[] = sprintf( "<a href='%s' rel='nofollow'>%s</a>", $urls[1][ $i ], $matches[2][ $i ] );
 	}
 
 	// Replace anything that looks like a URL with the next anchor in $replace.
@@ -281,27 +287,33 @@ function o2_hovercards_truncate( $content = '', $length = 250 ) {
  * @return string JSON encoded response.
  */
 function o2_hovercards_get_hovercard() {
+	check_admin_referer( 'o2_hovercard_request', 'nonce' );
+
 	$slug = '';
 
-	if ( isset( $_REQUEST[ 'slug' ] ) ) {
-		$slug = $_REQUEST[ 'slug' ];
+	if ( isset( $_REQUEST['slug'] ) ) {
+		$slug = sanitize_text_field( wp_unslash( $_REQUEST['slug'] ) );
 	}
 
 	$hovercard_info = o2_hovercards_get_hovercard_info( $slug );
 	if ( ! $hovercard_info ) {
 		return o2_API_Base::die_failure(
 			'missing_hovercard_info',
+			/* translators: %s is the ticket ID */
 			sprintf( __( 'The service for %s was not found into registered services.', 'o2-hovercards' ), $slug )
 		);
 	}
 
-	$response = wp_parse_args( $hovercard_info, array(
-		'title'       => '',
-		'url'         => '',
-		'subtitle'    => '',
-		'description' => '',
-		'meta'        => array()
-	) );
+	$response = wp_parse_args(
+		$hovercard_info,
+		array(
+			'title'       => '',
+			'url'         => '',
+			'subtitle'    => '',
+			'description' => '',
+			'meta'        => array(),
+		)
+	);
 
 	// Sanitize content.
 	foreach ( array( 'title', 'description' ) as $key ) {
@@ -350,7 +362,7 @@ function o2_hovercards_add_marker( $link = '' ) {
 function o2_hovercards_markup_links( $content = '' ) {
 	$o2hc = o2_hovercards();
 
-	$find = $o2hc->regex;
+	$find    = $o2hc->regex;
 	$replace = array_map( 'o2_hovercards_add_marker', $o2hc->urls );
 
 	preg_match_all( '#[^>]+(?=<[^/]*[^a])|[^>]+$#', $content, $matches, PREG_SET_ORDER );

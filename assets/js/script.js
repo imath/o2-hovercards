@@ -38,7 +38,8 @@
 				url: o2.options.readURL + '&method=query',
 				data: {
 					callback: 'hovercards',
-					slug: slug
+					slug: slug,
+					nonce: o2HoverCards.nonce
 				}
 			} ).done( function( response ) {
 				pointers[ slug ] = response.data;
